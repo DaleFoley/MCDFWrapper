@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using OpenMcdf;
@@ -32,7 +33,7 @@ namespace MCDFWrapperTests
                 MCDFWrapper.EncodingType encodingType = MCDFWrapper.EncodingType.ASCII;
 
                 mCDFWrapper.SetStreamData(streamName, streamData, encodingType);
-                mCDFWrapper.CompoundFile.Commit(true);
+                mCDFWrapper.Commit(true);
             }
 
             [TestMethod]
@@ -49,7 +50,7 @@ namespace MCDFWrapperTests
                 Assert.IsNotNull(streamData, nameof(streamData) + " is null");
 
                 mCDFWrapper.SetStreamData(streamName, streamData, MCDFWrapper.EncodingType.UTF8);
-                mCDFWrapper.CompoundFile.Commit(true);
+                mCDFWrapper.Commit(true);
             }
 
             [TestMethod]
@@ -58,10 +59,30 @@ namespace MCDFWrapperTests
                 MCDFWrapper.MCDFWrapper mCDFWrapper = new MCDFWrapper.MCDFWrapper(testCVJFile,
                     CFSUpdateMode.Update, CFSConfiguration.Default);
 
-                string streamName = "Contents";
+                mCDFWrapper.EmptyStream("Contents");
+                mCDFWrapper.Commit(true);
+            }
 
-                mCDFWrapper.EmptyStream(streamName);
-                mCDFWrapper.CompoundFile.Commit(true);
+            [TestMethod]
+            public void GetListOfStreams_FileWithMoreThanOneStream_ReturnedListOfStreams()
+            {
+                MCDFWrapper.MCDFWrapper mCDFWrapper = new MCDFWrapper.MCDFWrapper(testCVJFile,
+                    CFSUpdateMode.Update, CFSConfiguration.Default);
+
+                List<string> listOfStreams = mCDFWrapper.GetListOfStreams();
+                Assert.IsTrue(listOfStreams.Count > 0);
+            }
+
+            [TestMethod]
+            public void GetStreamContents_StreamWithContents_ReturnStreamContents()
+            {
+                MCDFWrapper.MCDFWrapper mCDFWrapper = new MCDFWrapper.MCDFWrapper(testCVJFile,
+                    CFSUpdateMode.Update, CFSConfiguration.Default);
+
+                string streamContents = mCDFWrapper.GetStreamData("Contents",
+                    MCDFWrapper.EncodingType.ASCII);
+
+                Assert.IsTrue(!string.IsNullOrEmpty(streamContents));
             }
         }
     }

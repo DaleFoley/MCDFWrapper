@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 using OpenMcdf;
 
@@ -16,13 +17,13 @@ namespace MCDFWrapper
 
     public class MCDFWrapper
     {
-        public CompoundFile CompoundFile;
+        private CompoundFile _compoundFile;
 
         private readonly string _pathOfCompoundFile;
         private readonly CFSUpdateMode _currentUpdateMode;
         private readonly CFSConfiguration _currentConfigParameters;
 
-        public long CompoundFileSize => this.CompoundFile.RootStorage.Size;
+        public long CompoundFileSize => this._compoundFile.RootStorage.Size;
 
         /// <summary>
         /// Load an existing compound file.
@@ -32,11 +33,28 @@ namespace MCDFWrapper
         /// <param name="updateMode">Select the update mode of the underlying data file</param>
         public MCDFWrapper(string fileName, CFSUpdateMode updateMode, CFSConfiguration configParameters)
         {
-            this.CompoundFile = new CompoundFile(fileName, updateMode, configParameters);
+            this._compoundFile = new CompoundFile(fileName, updateMode, configParameters);
 
             this._pathOfCompoundFile = fileName;
             this._currentUpdateMode = updateMode;
             this._currentConfigParameters = configParameters;
+        }
+
+        /// <summary>
+        /// Return a list of all streams in this compound file.
+        /// </summary>
+        /// <returns>string list representing all directory names.</returns>
+        public List<string> GetListOfStreams()
+        {
+            List<string> rtn = new List<string>();
+
+            int numberOfDirectories = this._compoundFile.GetNumDirectories();
+            for(var i = 0; i < numberOfDirectories; i++)
+            {
+                rtn.Add(this._compoundFile.GetNameDirEntry(i));
+            }
+
+            return rtn;
         }
 
         /// <summary>
@@ -74,8 +92,49 @@ namespace MCDFWrapper
                     break;
             }
 
-            CFStream streamToSetData = this.CompoundFile.RootStorage.GetStream(streamName);
+            CFStream streamToSetData = this._compoundFile.RootStorage.GetStream(streamName);
             streamToSetData.SetData(dataToBeSet);
+        }
+
+        /// <summary>
+        /// Return string contents of stream in compound file.
+        /// </summary>
+        /// <param name="streamName">The name of the stream to operate on.</param>
+        /// <param name="encoding">The encoding to be used.</param>
+        /// <returns>string contents of stream.</returns>
+        public string GetStreamData(string streamName, EncodingType encoding)
+        {
+            string rtn = null;
+
+            CFStream streamToGetDataFrom = this._compoundFile.RootStorage.GetStream(streamName);
+            byte[] streamData = streamToGetDataFrom.GetData();
+
+            switch (encoding)
+            {
+                case EncodingType.ASCII:
+                    rtn = Encoding.ASCII.GetString(streamData);
+                    break;
+                case EncodingType.BigEndianUnicode:
+                    rtn = Encoding.BigEndianUnicode.GetString(streamData);
+                    break;
+                case EncodingType.Unicode:
+                    rtn = Encoding.Unicode.GetString(streamData);
+                    break;
+                case EncodingType.UTF32:
+                    rtn = Encoding.UTF32.GetString(streamData);
+                    break;
+                case EncodingType.UTF8:
+                    rtn = Encoding.UTF8.GetString(streamData);
+                    break;
+                case EncodingType.UTF7:
+                    rtn = Encoding.UTF7.GetString(streamData);
+                    break;
+                default:
+                    rtn = Encoding.ASCII.GetString(streamData);
+                    break;
+            }
+
+            return rtn;
         }
 
         /// <summary>
@@ -85,15 +144,29 @@ namespace MCDFWrapper
         /// <param name="streamName">The stream to empty.</param>
         public void EmptyStream(string streamName)
         {
-            this.CompoundFile.RootStorage.Delete(streamName);
-            this.CompoundFile.Commit(true);
+            this._compoundFile.RootStorage.Delete(streamName);
+            this._compoundFile.Commit(true);
 
-            this.CompoundFile.Close();
+            this._compoundFile.Close();
 
             CompoundFile.ShrinkCompoundFile(this._pathOfCompoundFile);
 
-            this.CompoundFile = new CompoundFile(_pathOfCompoundFile, _currentUpdateMode, _currentConfigParameters);
-            this.CompoundFile.RootStorage.AddStream(streamName);
+            this._compoundFile = new CompoundFile(_pathOfCompoundFile, _currentUpdateMode, _currentConfigParameters);
+            this._compoundFile.RootStorage.AddStream(streamName);
+        }
+
+        /// <summary>
+        /// Commit data changes since the previously commit operation
+        /// to the underlying supporting stream or file on the disk.
+        /// </summary>
+        /// <param name="releaseMemory">If true, release loaded sectors to limit memory usage but reduces following read operations performance</param>
+        /// <remarks>
+        /// This method can be used only if 
+        /// the supporting stream has been opened in 
+        /// </remarks>
+        public void Commit(bool releaseMemory)
+        {
+            this._compoundFile.Commit(releaseMemory);
         }
     }
 }
