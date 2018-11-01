@@ -43,16 +43,45 @@ namespace MCDFWrapper
         /// <summary>
         /// Return a list of all streams in this compound file.
         /// </summary>
+        /// <param name="ignoreEmptyDirectoryName">Ignores any directories with name that is null or empty string.</param>
         /// <returns>string list representing all directory names.</returns>
-        public List<string> GetListOfStreams()
+        public List<string> GetListOfStreams(bool ignoreEmptyDirectoryName = false)
         {
             List<string> rtn = new List<string>();
 
             int numberOfDirectories = this._compoundFile.GetNumDirectories();
             for(var i = 0; i < numberOfDirectories; i++)
             {
+                string nameDirEntry = null;
+
+                if (this.IsStreamNameEmpty(i, ignoreEmptyDirectoryName, ref nameDirEntry)) { continue; }
                 rtn.Add(this._compoundFile.GetNameDirEntry(i));
             }
+
+            return rtn;
+        }
+
+        /// <summary>
+        /// Return an array of all streams in this compound file.
+        /// </summary>
+        /// <param name="ignoreEmptyDirectoryName">Ignores any directories with name that is null or empty string.</param>
+        /// <returns>string array representing all directory names.</returns>
+        public string[] GetArrayOfStreams(bool ignoreEmptyDirectoryName = false)
+        {
+            string[] rtn = null;
+
+            List<string> listOfStreams = new List<string>();
+
+            int numberOfDirectories = this._compoundFile.GetNumDirectories();
+            for (var i = 0; i < numberOfDirectories; i++)
+            {
+                string nameDirEntry = null;
+
+                if (this.IsStreamNameEmpty(i, ignoreEmptyDirectoryName, ref nameDirEntry)) { continue; }
+                listOfStreams.Add(nameDirEntry);
+            }
+
+            rtn = listOfStreams.ToArray();
 
             return rtn;
         }
@@ -167,6 +196,16 @@ namespace MCDFWrapper
         public void Commit(bool releaseMemory)
         {
             this._compoundFile.Commit(releaseMemory);
+        }
+
+        private bool IsStreamNameEmpty(int streamIdx, bool isIgnoreNullOrEmptyDirEntry, ref string nameDirEntry)
+        {
+            bool rtn = false;
+            nameDirEntry = this._compoundFile.GetNameDirEntry(streamIdx);
+
+            if (isIgnoreNullOrEmptyDirEntry) { rtn = string.IsNullOrEmpty(nameDirEntry); }
+
+            return rtn;
         }
     }
 }

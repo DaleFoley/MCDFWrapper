@@ -74,6 +74,16 @@ namespace MCDFWrapperTests
             }
 
             [TestMethod]
+            public void GetArrayOfStreams_FileWithMoreThanOneStream_ReturnedArrayOfStreams()
+            {
+                MCDFWrapper.MCDFWrapper mCDFWrapper = new MCDFWrapper.MCDFWrapper(testCVJFile,
+                    CFSUpdateMode.Update, CFSConfiguration.Default);
+
+                string[] arrayOfStreams = mCDFWrapper.GetArrayOfStreams();
+                Assert.IsTrue(arrayOfStreams.Length > 0);
+            }
+
+            [TestMethod]
             public void GetStreamContents_StreamWithContents_ReturnStreamContents()
             {
                 MCDFWrapper.MCDFWrapper mCDFWrapper = new MCDFWrapper.MCDFWrapper(testCVJFile,
