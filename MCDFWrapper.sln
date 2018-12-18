@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCDFWrapper", "MCDFWrapper\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenMcdf", "..\..\..\..\open_source\openmcdf\sources\OpenMcdf\OpenMcdf.csproj", "{56E15D4A-8A37-4C7C-BB44-FD59AFF220C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCDFWrapperTests", "Tests\MCDFWrapperTests\MCDFWrapperTests.csproj", "{AB54C3A1-84FA-4781-A89E-6B70D321CE1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCDFWrapperTests", "Tests\MCDFWrapperTests\MCDFWrapperTests.csproj", "{FA97F035-8A1A-414C-949D-36DE2A12E0C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{56E15D4A-8A37-4C7C-BB44-FD59AFF220C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56E15D4A-8A37-4C7C-BB44-FD59AFF220C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56E15D4A-8A37-4C7C-BB44-FD59AFF220C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB54C3A1-84FA-4781-A89E-6B70D321CE1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB54C3A1-84FA-4781-A89E-6B70D321CE1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB54C3A1-84FA-4781-A89E-6B70D321CE1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB54C3A1-84FA-4781-A89E-6B70D321CE1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA97F035-8A1A-414C-949D-36DE2A12E0C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA97F035-8A1A-414C-949D-36DE2A12E0C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA97F035-8A1A-414C-949D-36DE2A12E0C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA97F035-8A1A-414C-949D-36DE2A12E0C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

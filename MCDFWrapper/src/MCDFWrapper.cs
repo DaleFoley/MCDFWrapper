@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 
 using OpenMcdf;
@@ -29,10 +29,12 @@ namespace MCDFWrapper
         /// Load an existing compound file.
         /// </summary>
         /// <param name="fileName">Compound file to read from</param>
-        /// <param name="sectorRecycle">If true, recycle unused sectors</param>
         /// <param name="updateMode">Select the update mode of the underlying data file</param>
+        /// <param name="configParameters">Configuration parameters for the compound files. They can be OR-combined to configure.</param>
         public MCDFWrapper(string fileName, CFSUpdateMode updateMode, CFSConfiguration configParameters)
         {
+            this._compoundFile?.Close();
+            
             this._compoundFile = new CompoundFile(fileName, updateMode, configParameters);
 
             this._pathOfCompoundFile = fileName;
@@ -166,6 +168,20 @@ namespace MCDFWrapper
             return rtn;
         }
 
+        public byte[] GetStreamByteData(string streamName)
+        {
+            CFStream streamToGetDataFrom = this._compoundFile.RootStorage.GetStream(streamName);
+            byte[] rtn = streamToGetDataFrom.GetData();
+
+            return rtn;
+        }
+
+        public void SetStreamByteData(string streamName, byte[] data)
+        {
+            CFStream streamToSetDataTo = this._compoundFile.RootStorage.GetStream(streamName);
+            streamToSetDataTo.SetData(data);
+        }
+
         /// <summary>
         /// Empties the stream, commits the changes to disk and closes the file, then shrinks the compound file
         /// and re-opens the compound file adding the original stream back in.
@@ -206,6 +222,12 @@ namespace MCDFWrapper
             if (isIgnoreNullOrEmptyDirEntry) { rtn = string.IsNullOrEmpty(nameDirEntry); }
 
             return rtn;
+        }
+
+        public void ShrinkCompundFile()
+        {
+            this._compoundFile.Close();
+            CompoundFile.ShrinkCompoundFile(this._pathOfCompoundFile);
         }
     }
 }
